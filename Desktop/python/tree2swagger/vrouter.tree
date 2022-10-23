@@ -1,0 +1,1419 @@
+module: vrouter
+  +--rw config
+  |  +--rw vrf* [name]
+  |  |  +--rw name                            vrf-name
+  |  |  +--rw l3vrf* [name]
+  |  |  |  +--rw name                           l3vrf-name
+  |  |  |  +--rw table-id                       uint32
+  |  |  |  +--rw vrouter-interface:interface
+  |  |  |  |  +--rw vrouter-interface:physical* [name]
+  |  |  |  |     +--rw vrouter-interface:ipv4
+  |  |  |  |     |  +--rw vrouter-interface:address* [ip]
+  |  |  |  |     |  |  +--rw vrouter-interface:ip      union
+  |  |  |  |     |  |  +--rw vrouter-interface:peer?   vr-inet:ipv4-address
+  |  |  |  |     |  +--rw vrouter-interface:enabled?    boolean
+  |  |  |  |     |  +--rw vrouter-interface:neighbor* [ip]
+  |  |  |  |     |     +--rw vrouter-interface:ip                    vr-inet:ipv4-address
+  |  |  |  |     |     +--rw vrouter-interface:link-layer-address    vr-if:mac-address
+  |  |  |  |     +--rw vrouter-interface:name                vrouter-types:ifname
+  |  |  |  |     +--rw vrouter-interface:mtu?                uint32
+  |  |  |  |     +--rw vrouter-interface:promiscuous?        boolean
+  |  |  |  |     +--rw vrouter-interface:description?        string
+  |  |  |  |     +--rw vrouter-interface:enabled?            boolean
+  |  |  |  |     +--rw vrouter-interface:port                union
+  |  |  |  |     +--rw vrouter-interface:rx-cp-protection?   boolean
+  |  |  |  |     +--rw vrouter-interface:tx-cp-protection?   boolean
+  |  |  |  |     +--rw vrouter-interface:ipv6
+  |  |  |  |     |  +--rw vrouter-interface:address* [ip]
+  |  |  |  |     |  |  +--rw vrouter-interface:ip      union
+  |  |  |  |     |  |  +--rw vrouter-interface:peer?   vr-inet:ipv6-address
+  |  |  |  |     |  +--rw vrouter-interface:enabled?    boolean
+  |  |  |  |     |  +--rw vrouter-interface:neighbor* [ip]
+  |  |  |  |     |     +--rw vrouter-interface:ip                    vr-inet:ipv6-address
+  |  |  |  |     |     +--rw vrouter-interface:link-layer-address    vr-if:mac-address
+  |  |  |  |     +--rw vrouter-interface:network-stack
+  |  |  |  |     |  +--rw vrouter-interface:ipv4
+  |  |  |  |     |  |  +--rw vrouter-interface:send-redirects?          boolean
+  |  |  |  |     |  |  +--rw vrouter-interface:accept-redirects?        boolean
+  |  |  |  |     |  |  +--rw vrouter-interface:accept-source-route?     boolean
+  |  |  |  |     |  |  +--rw vrouter-interface:arp-announce?            enumeration
+  |  |  |  |     |  |  +--rw vrouter-interface:arp-filter?              boolean
+  |  |  |  |     |  |  +--rw vrouter-interface:arp-ignore?              enumeration
+  |  |  |  |     |  |  +--rw vrouter-interface:arp-proxy?               boolean
+  |  |  |  |     |  |  +--rw vrouter-interface:log-invalid-addresses?   boolean
+  |  |  |  |     |  +--rw vrouter-interface:ipv6
+  |  |  |  |     |     +--rw vrouter-interface:autoconfiguration?         boolean
+  |  |  |  |     |     +--rw vrouter-interface:accept-router-advert?      enumeration
+  |  |  |  |     |     +--rw vrouter-interface:accept-redirects?          boolean
+  |  |  |  |     |     +--rw vrouter-interface:accept-source-route?       boolean
+  |  |  |  |     |     +--rw vrouter-interface:router-solicitations?      int16
+  |  |  |  |     |     +--rw vrouter-interface:use-temporary-addresses?   enumeration
+  |  |  |  |     +--rw vrouter-interface:ethernet
+  |  |  |  |     |  +--rw vrouter-interface:mac-address?       unicast-mac-address
+  |  |  |  |     |  +--rw vrouter-interface:auto-negotiate?    boolean
+  |  |  |  |     |  +--rw vrouter-interface:duplex-mode?       enumeration
+  |  |  |  |     |  +--rw vrouter-interface:port-speed?        enumeration
+  |  |  |  |     |  +--rw vrouter-interface:flow-control-rx?   boolean
+  |  |  |  |     |  +--rw vrouter-interface:flow-control-tx?   boolean
+  |  |  |  |     +--rw vrouter-interface:qos!
+  |  |  |  |        +--rw vrouter-interface:ingress!
+  |  |  |  |        |  +--rw vrouter-interface:rate-limit!
+  |  |  |  |        |     +--rw vrouter-interface:policer?          -> /vrouter:config/vrouter-qos:qos/policer/name
+  |  |  |  |        |     +--rw vrouter-interface:shared-policer?   -> /vrouter:config/vrouter-qos:qos/shared-policer/name
+  |  |  |  |        +--rw vrouter-interface:egress!
+  |  |  |  |           +--rw vrouter-interface:rate-limit!
+  |  |  |  |           |  +--rw vrouter-interface:policer?          -> /vrouter:config/vrouter-qos:qos/policer/name
+  |  |  |  |           |  +--rw vrouter-interface:shared-policer?   -> /vrouter:config/vrouter-qos:qos/shared-policer/name
+  |  |  |  |           |  +--rw vrouter-interface:shaper?           -> /vrouter:config/vrouter-qos:qos/shaper/name {advanced}?
+  |  |  |  |           +--rw vrouter-interface:scheduler?    -> /vrouter:config/vrouter-qos:qos/scheduler/name {advanced}?
+  |  |  |  +--rw vrouter-ntp:ntp!
+  |  |  |     +--rw vrouter-ntp:enabled?              boolean
+  |  |  |     +--rw vrouter-ntp:ntp-source-address?   vr-inet:ip-address
+  |  |  |     +--rw vrouter-ntp:auth-key* [key-id]
+  |  |  |     |  +--rw vrouter-ntp:key-id       uint16
+  |  |  |     |  +--rw vrouter-ntp:key-value?   string
+  |  |  |     +--rw vrouter-ntp:server-subnet* [num]
+  |  |  |     |  +--rw vrouter-ntp:num      uint16
+  |  |  |     |  +--rw vrouter-ntp:allow?   union
+  |  |  |     |  +--rw vrouter-ntp:deny?    union
+  |  |  |     o--rw vrouter-ntp:server* [address]
+  |  |  |        +--rw vrouter-ntp:address             vr-inet:host
+  |  |  |        +--rw vrouter-ntp:version?            uint8
+  |  |  |        +--rw vrouter-ntp:association-type?   enumeration
+  |  |  |        +--rw vrouter-ntp:iburst?             boolean
+  |  |  |        +--rw vrouter-ntp:prefer?             boolean
+  |  |  |        o--rw vrouter-ntp:auth-key-id?        -> /vrouter:config/vrf/vrouter-ntp:ntp/auth-key/key-id
+  |  |  +--rw vrouter-system:network-stack
+  |  |  |  +--rw vrouter-system:bridge {per-vrf-bridge-call-filter}?
+  |  |  |  |  +--rw vrouter-system:call-ipv4-filtering?   boolean
+  |  |  |  |  +--rw vrouter-system:call-ipv6-filtering?   boolean
+  |  |  |  +--rw vrouter-system:icmp
+  |  |  |  |  +--rw vrouter-system:ignore-icmp-echo-broadcast?   boolean
+  |  |  |  |  +--rw vrouter-system:rate-limit-icmp?              uint16
+  |  |  |  |  +--rw vrouter-system:rate-mask-icmp?               bits
+  |  |  |  +--rw vrouter-system:ipv4
+  |  |  |  |  +--rw vrouter-system:forwarding?              boolean
+  |  |  |  |  +--rw vrouter-system:send-redirects?          boolean
+  |  |  |  |  +--rw vrouter-system:accept-redirects?        boolean
+  |  |  |  |  +--rw vrouter-system:accept-source-route?     boolean
+  |  |  |  |  +--rw vrouter-system:arp-announce?            enumeration
+  |  |  |  |  +--rw vrouter-system:arp-filter?              boolean
+  |  |  |  |  +--rw vrouter-system:arp-ignore?              enumeration
+  |  |  |  |  +--rw vrouter-system:arp-proxy?               boolean
+  |  |  |  |  +--rw vrouter-system:log-invalid-addresses?   boolean
+  |  |  |  +--rw vrouter-system:ipv6
+  |  |  |  |  +--rw vrouter-system:forwarding?                boolean
+  |  |  |  |  +--rw vrouter-system:autoconfiguration?         boolean
+  |  |  |  |  +--rw vrouter-system:accept-router-advert?      enumeration
+  |  |  |  |  +--rw vrouter-system:accept-redirects?          boolean
+  |  |  |  |  +--rw vrouter-system:accept-source-route?       boolean
+  |  |  |  |  +--rw vrouter-system:router-solicitations?      int16
+  |  |  |  |  +--rw vrouter-system:use-temporary-addresses?   enumeration
+  |  |  |  +--rw vrouter-system:neighbor
+  |  |  |  |  +--rw vrouter-system:ipv4-max-entries?   uint32
+  |  |  |  |  +--rw vrouter-system:ipv6-max-entries?   uint32
+  |  |  |  +--rw vrouter-system:conntrack
+  |  |  |     +--rw vrouter-system:max-entries?                  uint32
+  |  |  |     +--rw vrouter-system:tcp-timeout-close?            uint32
+  |  |  |     +--rw vrouter-system:tcp-timeout-close-wait?       uint32
+  |  |  |     +--rw vrouter-system:tcp-timeout-established?      uint32
+  |  |  |     +--rw vrouter-system:tcp-timeout-fin-wait?         uint32
+  |  |  |     +--rw vrouter-system:tcp-timeout-last-ack?         uint32
+  |  |  |     +--rw vrouter-system:tcp-timeout-max-retrans?      uint32
+  |  |  |     +--rw vrouter-system:tcp-timeout-syn-recv?         uint32
+  |  |  |     +--rw vrouter-system:tcp-timeout-syn-sent?         uint32
+  |  |  |     +--rw vrouter-system:tcp-timeout-time-wait?        uint32
+  |  |  |     +--rw vrouter-system:tcp-timeout-unacknowledged?   uint32
+  |  |  |     +--rw vrouter-system:udp-timeout?                  uint32
+  |  |  |     +--rw vrouter-system:udp-timeout-stream?           uint32
+  |  |  +--rw vrouter-interface:interface
+  |  |  |  +--rw vrouter-interface:physical* [name]
+  |  |  |     +--rw vrouter-interface:ipv4
+  |  |  |     |  +--rw vrouter-interface:address* [ip]
+  |  |  |     |  |  +--rw vrouter-interface:ip      union
+  |  |  |     |  |  +--rw vrouter-interface:peer?   vr-inet:ipv4-address
+  |  |  |     |  +--rw vrouter-interface:enabled?    boolean
+  |  |  |     |  +--rw vrouter-interface:neighbor* [ip]
+  |  |  |     |  |  +--rw vrouter-interface:ip                    vr-inet:ipv4-address
+  |  |  |     |  |  +--rw vrouter-interface:link-layer-address    vr-if:mac-address
+  |  |  |     |  +--rw vrouter-interface:dhcp!
+  |  |  |     |     +--rw vrouter-interface:enabled?                        boolean
+  |  |  |     |     +--rw vrouter-interface:timeout?                        uint32
+  |  |  |     |     +--rw vrouter-interface:retry?                          uint32
+  |  |  |     |     +--rw vrouter-interface:select-timeout?                 uint32
+  |  |  |     |     +--rw vrouter-interface:reboot?                         uint32
+  |  |  |     |     +--rw vrouter-interface:initial-interval?               uint32
+  |  |  |     |     +--rw vrouter-interface:dhcp-lease-time?                uint32
+  |  |  |     |     +--rw vrouter-interface:dhcp-client-identifier-ascii?   string
+  |  |  |     |     +--rw vrouter-interface:dhcp-client-identifier-hexa?    string
+  |  |  |     |     +--rw vrouter-interface:host-name?                      string
+  |  |  |     |     +--rw vrouter-interface:request*                        dhcp-request
+  |  |  |     +--rw vrouter-interface:name                vrouter-types:ifname
+  |  |  |     +--rw vrouter-interface:mtu?                uint32
+  |  |  |     +--rw vrouter-interface:promiscuous?        boolean
+  |  |  |     +--rw vrouter-interface:description?        string
+  |  |  |     +--rw vrouter-interface:enabled?            boolean
+  |  |  |     +--rw vrouter-interface:port                union
+  |  |  |     +--rw vrouter-interface:rx-cp-protection?   boolean
+  |  |  |     +--rw vrouter-interface:tx-cp-protection?   boolean
+  |  |  |     +--rw vrouter-interface:ipv6
+  |  |  |     |  +--rw vrouter-interface:address* [ip]
+  |  |  |     |  |  +--rw vrouter-interface:ip      union
+  |  |  |     |  |  +--rw vrouter-interface:peer?   vr-inet:ipv6-address
+  |  |  |     |  +--rw vrouter-interface:enabled?    boolean
+  |  |  |     |  +--rw vrouter-interface:neighbor* [ip]
+  |  |  |     |     +--rw vrouter-interface:ip                    vr-inet:ipv6-address
+  |  |  |     |     +--rw vrouter-interface:link-layer-address    vr-if:mac-address
+  |  |  |     +--rw vrouter-interface:network-stack
+  |  |  |     |  +--rw vrouter-interface:ipv4
+  |  |  |     |  |  +--rw vrouter-interface:send-redirects?          boolean
+  |  |  |     |  |  +--rw vrouter-interface:accept-redirects?        boolean
+  |  |  |     |  |  +--rw vrouter-interface:accept-source-route?     boolean
+  |  |  |     |  |  +--rw vrouter-interface:arp-announce?            enumeration
+  |  |  |     |  |  +--rw vrouter-interface:arp-filter?              boolean
+  |  |  |     |  |  +--rw vrouter-interface:arp-ignore?              enumeration
+  |  |  |     |  |  +--rw vrouter-interface:arp-proxy?               boolean
+  |  |  |     |  |  +--rw vrouter-interface:log-invalid-addresses?   boolean
+  |  |  |     |  +--rw vrouter-interface:ipv6
+  |  |  |     |     +--rw vrouter-interface:autoconfiguration?         boolean
+  |  |  |     |     +--rw vrouter-interface:accept-router-advert?      enumeration
+  |  |  |     |     +--rw vrouter-interface:accept-redirects?          boolean
+  |  |  |     |     +--rw vrouter-interface:accept-source-route?       boolean
+  |  |  |     |     +--rw vrouter-interface:router-solicitations?      int16
+  |  |  |     |     +--rw vrouter-interface:use-temporary-addresses?   enumeration
+  |  |  |     +--rw vrouter-interface:ethernet
+  |  |  |     |  +--rw vrouter-interface:mac-address?       unicast-mac-address
+  |  |  |     |  +--rw vrouter-interface:auto-negotiate?    boolean
+  |  |  |     |  +--rw vrouter-interface:duplex-mode?       enumeration
+  |  |  |     |  +--rw vrouter-interface:port-speed?        enumeration
+  |  |  |     |  +--rw vrouter-interface:flow-control-rx?   boolean
+  |  |  |     |  +--rw vrouter-interface:flow-control-tx?   boolean
+  |  |  |     +--rw vrouter-interface:qos!
+  |  |  |        +--rw vrouter-interface:ingress!
+  |  |  |        |  +--rw vrouter-interface:rate-limit!
+  |  |  |        |     +--rw vrouter-interface:policer?          -> /vrouter:config/vrouter-qos:qos/policer/name
+  |  |  |        |     +--rw vrouter-interface:shared-policer?   -> /vrouter:config/vrouter-qos:qos/shared-policer/name
+  |  |  |        +--rw vrouter-interface:egress!
+  |  |  |           +--rw vrouter-interface:rate-limit!
+  |  |  |           |  +--rw vrouter-interface:policer?          -> /vrouter:config/vrouter-qos:qos/policer/name
+  |  |  |           |  +--rw vrouter-interface:shared-policer?   -> /vrouter:config/vrouter-qos:qos/shared-policer/name
+  |  |  |           |  +--rw vrouter-interface:shaper?           -> /vrouter:config/vrouter-qos:qos/shaper/name {advanced}?
+  |  |  |           +--rw vrouter-interface:scheduler?    -> /vrouter:config/vrouter-qos:qos/scheduler/name {advanced}?
+  |  |  +--rw vrouter-ntp:ntp!
+  |  |     +--rw vrouter-ntp:enabled?              boolean
+  |  |     +--rw vrouter-ntp:ntp-source-address?   vr-inet:ip-address
+  |  |     +--rw vrouter-ntp:auth-key* [key-id]
+  |  |     |  +--rw vrouter-ntp:key-id       uint16
+  |  |     |  +--rw vrouter-ntp:key-value?   string
+  |  |     +--rw vrouter-ntp:server-subnet* [num]
+  |  |     |  +--rw vrouter-ntp:num      uint16
+  |  |     |  +--rw vrouter-ntp:allow?   union
+  |  |     |  +--rw vrouter-ntp:deny?    union
+  |  |     o--rw vrouter-ntp:server* [address]
+  |  |     |  +--rw vrouter-ntp:address             vr-inet:host
+  |  |     |  +--rw vrouter-ntp:version?            uint8
+  |  |     |  +--rw vrouter-ntp:association-type?   enumeration
+  |  |     |  +--rw vrouter-ntp:iburst?             boolean
+  |  |     |  +--rw vrouter-ntp:prefer?             boolean
+  |  |     |  o--rw vrouter-ntp:auth-key-id?        -> /vrouter:config/vrf/vrouter-ntp:ntp/auth-key/key-id
+  |  |     +--rw vrouter-ntp:time-sources
+  |  |        +--rw vrouter-ntp:server* [address]
+  |  |           +--rw vrouter-ntp:address             vr-inet:host
+  |  |           +--rw vrouter-ntp:version?            uint8
+  |  |           +--rw vrouter-ntp:association-type?   enumeration
+  |  |           +--rw vrouter-ntp:iburst?             boolean
+  |  |           +--rw vrouter-ntp:prefer?             boolean
+  |  |           +--rw vrouter-ntp:auth-key-id?        -> /vrouter:config/vrf/vrouter-ntp:ntp/auth-key/key-id
+  |  +--rw vrouter-system:system!
+  |  |  +--rw vrouter-system:hostname?        vr-inet:domain-name
+  |  |  +--rw vrouter-system:cp-mask?         union
+  |  |  +--rw vrouter-system:network-stack
+  |  |  |  +--rw vrouter-system:bridge
+  |  |  |  |  +--rw vrouter-system:call-ipv4-filtering?   boolean
+  |  |  |  |  +--rw vrouter-system:call-ipv6-filtering?   boolean
+  |  |  |  +--rw vrouter-system:icmp
+  |  |  |  |  +--rw vrouter-system:ignore-icmp-echo-broadcast?   boolean
+  |  |  |  |  +--rw vrouter-system:rate-limit-icmp?              uint16
+  |  |  |  |  +--rw vrouter-system:rate-mask-icmp?               bits
+  |  |  |  +--rw vrouter-system:ipv4
+  |  |  |  |  +--rw vrouter-system:forwarding?              boolean
+  |  |  |  |  +--rw vrouter-system:send-redirects?          boolean
+  |  |  |  |  +--rw vrouter-system:accept-redirects?        boolean
+  |  |  |  |  +--rw vrouter-system:accept-source-route?     boolean
+  |  |  |  |  +--rw vrouter-system:arp-announce?            enumeration
+  |  |  |  |  +--rw vrouter-system:arp-filter?              boolean
+  |  |  |  |  +--rw vrouter-system:arp-ignore?              enumeration
+  |  |  |  |  +--rw vrouter-system:arp-proxy?               boolean
+  |  |  |  |  +--rw vrouter-system:log-invalid-addresses?   boolean
+  |  |  |  +--rw vrouter-system:ipv6
+  |  |  |  |  +--rw vrouter-system:forwarding?                boolean
+  |  |  |  |  +--rw vrouter-system:autoconfiguration?         boolean
+  |  |  |  |  +--rw vrouter-system:accept-router-advert?      enumeration
+  |  |  |  |  +--rw vrouter-system:accept-redirects?          boolean
+  |  |  |  |  +--rw vrouter-system:accept-source-route?       boolean
+  |  |  |  |  +--rw vrouter-system:router-solicitations?      int16
+  |  |  |  |  +--rw vrouter-system:use-temporary-addresses?   enumeration
+  |  |  |  +--rw vrouter-system:neighbor
+  |  |  |  |  +--rw vrouter-system:ipv4-max-entries?           uint32
+  |  |  |  |  +--rw vrouter-system:ipv6-max-entries?           uint32
+  |  |  |  |  +--rw vrouter-system:ipv4-base-reachable-time?   uint32
+  |  |  |  |  +--rw vrouter-system:ipv6-base-reachable-time?   uint32
+  |  |  |  +--rw vrouter-system:conntrack
+  |  |  |     +--rw vrouter-system:max-entries?                  uint32
+  |  |  |     +--rw vrouter-system:tcp-timeout-close?            uint32
+  |  |  |     +--rw vrouter-system:tcp-timeout-close-wait?       uint32
+  |  |  |     +--rw vrouter-system:tcp-timeout-established?      uint32
+  |  |  |     +--rw vrouter-system:tcp-timeout-fin-wait?         uint32
+  |  |  |     +--rw vrouter-system:tcp-timeout-last-ack?         uint32
+  |  |  |     +--rw vrouter-system:tcp-timeout-max-retrans?      uint32
+  |  |  |     +--rw vrouter-system:tcp-timeout-syn-recv?         uint32
+  |  |  |     +--rw vrouter-system:tcp-timeout-syn-sent?         uint32
+  |  |  |     +--rw vrouter-system:tcp-timeout-time-wait?        uint32
+  |  |  |     +--rw vrouter-system:tcp-timeout-unacknowledged?   uint32
+  |  |  |     +--rw vrouter-system:udp-timeout?                  uint32
+  |  |  |     +--rw vrouter-system:udp-timeout-stream?           uint32
+  |  |  +--rw vrouter-system:timezone?        union
+  |  |  +--rw vrouter-fast-path:fast-path!
+  |  |     +--rw vrouter-fast-path:enabled?          boolean
+  |  |     +--rw vrouter-fast-path:port*             union
+  |  |     +--rw vrouter-fast-path:core-mask
+  |  |     |  +--rw vrouter-fast-path:fast-path?     union
+  |  |     |  +--rw vrouter-fast-path:exception?     vr-types:coremask
+  |  |     |  +--rw vrouter-fast-path:linux-to-fp?   vr-types:coremask
+  |  |     |  x--rw vrouter-fast-path:qos?           vr-types:coremask
+  |  |     |  +--rw vrouter-fast-path:port?          string
+  |  |     +--rw vrouter-fast-path:cp-protection
+  |  |     |  +--rw vrouter-fast-path:budget?   int16
+  |  |     +--rw vrouter-fast-path:crypto
+  |  |     |  +--rw vrouter-fast-path:driver?              enumeration
+  |  |     |  +--rw vrouter-fast-path:offload-core-mask?   union
+  |  |     |  +--rw vrouter-fast-path:nb-session?          uint32
+  |  |     |  +--rw vrouter-fast-path:nb-buffer?           uint32
+  |  |     +--rw vrouter-fast-path:advanced
+  |  |     |  +--rw vrouter-fast-path:nb-mbuf?                             string
+  |  |     |  +--rw vrouter-fast-path:machine-memory?                      uint32
+  |  |     |  +--rw vrouter-fast-path:mainloop-sleep-delay?                uint16
+  |  |     |  +--rw vrouter-fast-path:offload?                             boolean
+  |  |     |  +--rw vrouter-fast-path:vlan-strip?                          boolean
+  |  |     |  +--rw vrouter-fast-path:intercore-ring-size?                 uint16
+  |  |     |  +--rw vrouter-fast-path:software-txq?                        uint16
+  |  |     |  +--rw vrouter-fast-path:nb-rxd?                              uint16
+  |  |     |  +--rw vrouter-fast-path:nb-txd?                              uint16
+  |  |     |  +--rw vrouter-fast-path:reserve-hugepages?                   boolean
+  |  |     |  +--rw vrouter-fast-path:ipv4-netfilter-cache?                boolean
+  |  |     |  +--rw vrouter-fast-path:ipv6-netfilter-cache?                boolean
+  |  |     |  +--rw vrouter-fast-path:hardware-queue-map* [port index queue]
+  |  |     |  |  +--rw vrouter-fast-path:port     vr-types:pci-port-name
+  |  |     |  |  +--rw vrouter-fast-path:index    uint16
+  |  |     |  |  +--rw vrouter-fast-path:queue    uint16
+  |  |     |  +--rw vrouter-fast-path:ipv4-pre-ipsec-fragmentation?        enumeration
+  |  |     |  +--rw vrouter-fast-path:ipv6-pre-ipsec-fragmentation?        enumeration
+  |  |     |  +--rw vrouter-fast-path:ipv6-lpm-long-prefix-optimization?   boolean
+  |  |     +--rw vrouter-fast-path:limits
+  |  |     |  +--rw vrouter-fast-path:fp-max-if?                uint32
+  |  |     |  +--rw vrouter-fast-path:fp-max-vrf?               uint32
+  |  |     |  +--rw vrouter-fast-path:ip4-max-addr?             uint32
+  |  |     |  +--rw vrouter-fast-path:ip4-max-route?            uint32
+  |  |     |  +--rw vrouter-fast-path:ip4-max-neigh?            uint32
+  |  |     |  +--rw vrouter-fast-path:ip6-max-addr?             uint32
+  |  |     |  +--rw vrouter-fast-path:ip6-max-route?            uint32
+  |  |     |  +--rw vrouter-fast-path:ip6-max-neigh?            uint32
+  |  |     |  +--rw vrouter-fast-path:pbr-max-rule?             uint32
+  |  |     |  +--rw vrouter-fast-path:filter4-max-rule?         uint32
+  |  |     |  +--rw vrouter-fast-path:filter6-max-rule?         uint32
+  |  |     |  +--rw vrouter-fast-path:filter4-max-ct?           uint32
+  |  |     |  +--rw vrouter-fast-path:filter6-max-ct?           uint32
+  |  |     |  +--rw vrouter-fast-path:filter-max-ipset?         uint32
+  |  |     |  +--rw vrouter-fast-path:filter-max-ipset-entry?   uint32
+  |  |     |  +--rw vrouter-fast-path:filter-bridge-max-rule?   uint32
+  |  |     |  +--rw vrouter-fast-path:vxlan-max-port?           uint32
+  |  |     |  +--rw vrouter-fast-path:vxlan-max-if?             uint32
+  |  |     |  +--rw vrouter-fast-path:vxlan-max-fdb?            uint32
+  |  |     |  +--rw vrouter-fast-path:reass4-max-queue?         uint32
+  |  |     |  +--rw vrouter-fast-path:reass6-max-queue?         uint32
+  |  |     |  +--rw vrouter-fast-path:ipsec-max-sp?             uint32
+  |  |     |  +--rw vrouter-fast-path:ipsec-max-sa?             uint32
+  |  |     |  +--rw vrouter-fast-path:ip-max-lpm-table?         uint32
+  |  |     |  +--rw vrouter-fast-path:ip-max-lpm-memory?        uint32
+  |  |     |  +--rw vrouter-fast-path:filter-max-cache?         uint32
+  |  |     |  +--rw vrouter-fast-path:filter6-max-cache?        uint32
+  |  |     |  +--rw vrouter-fast-path:vlan-max-if?              uint32
+  |  |     |  +--rw vrouter-fast-path:macvlan-max-if?           uint32
+  |  |     |  +--rw vrouter-fast-path:gre-max-if?               uint32
+  |  |     |  +--rw vrouter-fast-path:svti-max-if?              uint32
+  |  |     |  +--rw vrouter-fast-path:pppoe-max-channel?        uint32
+  |  |     |  +--rw vrouter-fast-path:mpls-max-label?           uint8
+  |  |     |  +--rw vrouter-fast-path:mpls-max-route?           uint32
+  |  |     |  +--rw vrouter-fast-path:mpls-max-lwt?             uint32
+  |  |     +--rw vrouter-fast-path:linux-sync
+  |  |     |  +--rw vrouter-fast-path:fpm-socket-size?    uint32
+  |  |     |  +--rw vrouter-fast-path:nl-socket-size?     uint32
+  |  |     |  +--rw vrouter-fast-path:ipset-dump-delay?   uint32
+  |  |     |  +--rw vrouter-fast-path:disable*            enumeration
+  |  |     +--rw vrouter-fast-path:mirror-traffic
+  |  |        +--rw vrouter-fast-path:from* [interface vrf type]
+  |  |           +--rw vrouter-fast-path:interface    vr-types:ifname
+  |  |           +--rw vrouter-fast-path:vrf          vrouter:vrf-name
+  |  |           +--rw vrouter-fast-path:type         union
+  |  |           +--rw vrouter-fast-path:to
+  |  |              +--rw vrouter-fast-path:interface    vr-types:ifname
+  |  |              +--rw vrouter-fast-path:vrf          vrouter:vrf-name
+  |  +--rw vrouter-qos:qos!
+  |     +--rw vrouter-qos:policer* [name]
+  |     |  +--rw vrouter-qos:name                string
+  |     |  +--rw vrouter-qos:description?        string
+  |     |  +--rw vrouter-qos:bandwidth           rate-t
+  |     |  +--rw vrouter-qos:burst?              burst-t
+  |     |  +--rw vrouter-qos:excess-bandwidth?   rate-t
+  |     |  +--rw vrouter-qos:excess-burst?       burst-t
+  |     +--rw vrouter-qos:shared-policer* [name]
+  |     |  +--rw vrouter-qos:name           string
+  |     |  +--rw vrouter-qos:description?   string
+  |     |  +--rw vrouter-qos:policer?       -> /vrouter:config/vrouter-qos:qos/policer/name
+  |     +--rw vrouter-qos:shaper* [name] {advanced}?
+  |     |  +--rw vrouter-qos:name               string
+  |     |  +--rw vrouter-qos:description?       string
+  |     |  +--rw vrouter-qos:bandwidth          rate-t
+  |     |  +--rw vrouter-qos:burst?             burst-t
+  |     |  +--rw vrouter-qos:layer1-overhead?   uint32
+  |     |  +--rw vrouter-qos:queue-size?        uint32
+  |     +--rw vrouter-qos:scheduler* [name] {advanced}?
+  |     |  +--rw vrouter-qos:name           string
+  |     |  +--rw vrouter-qos:description?   string
+  |     |  +--rw vrouter-qos:core?          uint32
+  |     |  +--rw vrouter-qos:pq!
+  |     |  |  +--rw vrouter-qos:nb-queue    uint32
+  |     |  |  +--rw vrouter-qos:queue* [id]
+  |     |  |     +--rw vrouter-qos:id          uint32
+  |     |  |     +--rw vrouter-qos:size?       uint32
+  |     |  |     +--rw vrouter-qos:policer?    -> /vrouter:config/vrouter-qos:qos/policer/name
+  |     |  |     +--rw vrouter-qos:shaper?     -> /vrouter:config/vrouter-qos:qos/shaper/name
+  |     |  |     +--rw vrouter-qos:class* [name]
+  |     |  |     |  +--rw vrouter-qos:name    -> /vrouter:config/vrouter-qos:qos/class/name
+  |     |  |     +--rw vrouter-qos:priority?   uint32
+  |     |  +--rw vrouter-qos:pb-dwrr!
+  |     |     +--rw vrouter-qos:nb-queue    uint32
+  |     |     +--rw vrouter-qos:queue* [id]
+  |     |        +--rw vrouter-qos:id          uint32
+  |     |        +--rw vrouter-qos:size?       uint32
+  |     |        +--rw vrouter-qos:policer?    -> /vrouter:config/vrouter-qos:qos/policer/name
+  |     |        +--rw vrouter-qos:shaper?     -> /vrouter:config/vrouter-qos:qos/shaper/name
+  |     |        +--rw vrouter-qos:class* [name]
+  |     |        |  +--rw vrouter-qos:name    -> /vrouter:config/vrouter-qos:qos/class/name
+  |     |        +--rw vrouter-qos:quantum?    uint32
+  |     |        +--rw vrouter-qos:priority?   pb-dwrr-prio-t
+  |     +--rw vrouter-qos:class-mask?       string {advanced}?
+  |     +--rw vrouter-qos:class* [name] {advanced}?
+  |        +--rw vrouter-qos:name           string
+  |        +--rw vrouter-qos:description?   string
+  |        +--rw vrouter-qos:mark?          string
+  |        +--rw vrouter-qos:cp?            boolean
+  +--ro state
+     +--ro vrf* [name]
+     |  +--ro name                            union
+     |  +--ro l3vrf* [name]
+     |  |  +--ro name                           string
+     |  |  +--ro table-id?                      uint32
+     |  |  +--ro vrouter-interface:interface
+     |  |  |  +--ro vrouter-interface:physical* [name]
+     |  |  |     +--ro vrouter-interface:name                vrouter-types:ifname
+     |  |  |     +--ro vrouter-interface:mtu?                uint32
+     |  |  |     +--ro vrouter-interface:promiscuous?        boolean
+     |  |  |     +--ro vrouter-interface:description?        string
+     |  |  |     +--ro vrouter-interface:enabled?            boolean
+     |  |  |     +--ro vrouter-interface:port?               string
+     |  |  |     +--ro vrouter-interface:rx-cp-protection?   boolean
+     |  |  |     +--ro vrouter-interface:tx-cp-protection?   boolean
+     |  |  |     +--ro vrouter-interface:ifindex?            uint32
+     |  |  |     +--ro vrouter-interface:admin-status        enumeration
+     |  |  |     +--ro vrouter-interface:oper-status         enumeration
+     |  |  |     +--ro vrouter-interface:last-change?        vr-types:timeticks64
+     |  |  |     +--ro vrouter-interface:counters
+     |  |  |     |  +--ro vrouter-interface:in-octets?          vr-types:counter64
+     |  |  |     |  +--ro vrouter-interface:in-unicast-pkts?    vr-types:counter64
+     |  |  |     |  +--ro vrouter-interface:in-discards?        vr-types:counter64
+     |  |  |     |  +--ro vrouter-interface:in-errors?          vr-types:counter64
+     |  |  |     |  +--ro vrouter-interface:out-octets?         vr-types:counter64
+     |  |  |     |  +--ro vrouter-interface:out-unicast-pkts?   vr-types:counter64
+     |  |  |     |  +--ro vrouter-interface:out-discards?       vr-types:counter64
+     |  |  |     |  +--ro vrouter-interface:out-errors?         vr-types:counter64
+     |  |  |     +--ro vrouter-interface:ipv4
+     |  |  |     |  +--ro vrouter-interface:address* [ip]
+     |  |  |     |  |  +--ro vrouter-interface:ip        union
+     |  |  |     |  |  +--ro vrouter-interface:peer?     vr-inet:ipv4-address
+     |  |  |     |  |  +--ro vrouter-interface:origin?   ip-address-origin
+     |  |  |     |  +--ro vrouter-interface:enabled?    boolean
+     |  |  |     |  +--ro vrouter-interface:neighbor* [ip]
+     |  |  |     |  |  +--ro vrouter-interface:ip                    vr-inet:ipv4-address
+     |  |  |     |  |  +--ro vrouter-interface:link-layer-address?   vr-if:mac-address
+     |  |  |     |  |  +--ro vrouter-interface:state                 neighbor-state
+     |  |  |     |  +--ro vrouter-interface:dhcp
+     |  |  |     |     +--ro vrouter-interface:enabled?                        boolean
+     |  |  |     |     +--ro vrouter-interface:timeout?                        uint32
+     |  |  |     |     +--ro vrouter-interface:retry?                          uint32
+     |  |  |     |     +--ro vrouter-interface:select-timeout?                 uint32
+     |  |  |     |     +--ro vrouter-interface:reboot?                         uint32
+     |  |  |     |     +--ro vrouter-interface:initial-interval?               uint32
+     |  |  |     |     +--ro vrouter-interface:dhcp-lease-time?                uint32
+     |  |  |     |     +--ro vrouter-interface:dhcp-client-identifier-ascii?   string
+     |  |  |     |     +--ro vrouter-interface:dhcp-client-identifier-hexa?    string
+     |  |  |     |     +--ro vrouter-interface:host-name?                      string
+     |  |  |     |     +--ro vrouter-interface:current-lease
+     |  |  |     |     |  +--ro vrouter-interface:fixed-address?   vr-inet:ipv4-address
+     |  |  |     |     |  +--ro vrouter-interface:renew?           string
+     |  |  |     |     |  +--ro vrouter-interface:rebind?          string
+     |  |  |     |     |  +--ro vrouter-interface:expire?          string
+     |  |  |     |     +--ro vrouter-interface:request*                        dhcp-request
+     |  |  |     +--ro vrouter-interface:ipv6
+     |  |  |     |  +--ro vrouter-interface:address* [ip]
+     |  |  |     |  |  +--ro vrouter-interface:ip        union
+     |  |  |     |  |  +--ro vrouter-interface:peer?     vr-inet:ipv6-address
+     |  |  |     |  |  +--ro vrouter-interface:origin?   ip-address-origin
+     |  |  |     |  |  +--ro vrouter-interface:status?   enumeration
+     |  |  |     |  +--ro vrouter-interface:enabled?    boolean
+     |  |  |     |  +--ro vrouter-interface:neighbor* [ip]
+     |  |  |     |     +--ro vrouter-interface:ip                    vr-inet:ipv6-address
+     |  |  |     |     +--ro vrouter-interface:link-layer-address?   vr-if:mac-address
+     |  |  |     |     +--ro vrouter-interface:router?               boolean
+     |  |  |     |     +--ro vrouter-interface:state                 neighbor-state
+     |  |  |     +--ro vrouter-interface:network-stack
+     |  |  |     |  +--ro vrouter-interface:ipv4
+     |  |  |     |  |  +--ro vrouter-interface:send-redirects?          boolean
+     |  |  |     |  |  +--ro vrouter-interface:accept-redirects?        boolean
+     |  |  |     |  |  +--ro vrouter-interface:accept-source-route?     boolean
+     |  |  |     |  |  +--ro vrouter-interface:arp-announce?            enumeration
+     |  |  |     |  |  +--ro vrouter-interface:arp-filter?              boolean
+     |  |  |     |  |  +--ro vrouter-interface:arp-ignore?              enumeration
+     |  |  |     |  |  +--ro vrouter-interface:arp-proxy?               boolean
+     |  |  |     |  |  +--ro vrouter-interface:log-invalid-addresses?   boolean
+     |  |  |     |  +--ro vrouter-interface:ipv6
+     |  |  |     |     +--ro vrouter-interface:autoconfiguration?         boolean
+     |  |  |     |     +--ro vrouter-interface:accept-router-advert?      enumeration
+     |  |  |     |     +--ro vrouter-interface:accept-redirects?          boolean
+     |  |  |     |     +--ro vrouter-interface:accept-source-route?       boolean
+     |  |  |     |     +--ro vrouter-interface:router-solicitations?      int16
+     |  |  |     |     +--ro vrouter-interface:use-temporary-addresses?   enumeration
+     |  |  |     +--ro vrouter-interface:ethernet
+     |  |  |     |  +--ro vrouter-interface:mac-address?       mac-address
+     |  |  |     |  +--ro vrouter-interface:auto-negotiate?    boolean
+     |  |  |     |  +--ro vrouter-interface:duplex-mode?       enumeration
+     |  |  |     |  +--ro vrouter-interface:port-speed?        enumeration
+     |  |  |     |  +--ro vrouter-interface:flow-control-rx?   boolean
+     |  |  |     |  +--ro vrouter-interface:flow-control-tx?   boolean
+     |  |  |     +--ro vrouter-interface:qos!
+     |  |  |        +--ro vrouter-interface:ingress!
+     |  |  |        |  +--ro vrouter-interface:rate-limit!
+     |  |  |        |     +--ro vrouter-interface:policer
+     |  |  |        |        +--ro vrouter-interface:bandwidth           rate-t
+     |  |  |        |        +--ro vrouter-interface:burst?              burst-t
+     |  |  |        |        +--ro vrouter-interface:excess-bandwidth?   rate-t
+     |  |  |        |        +--ro vrouter-interface:excess-burst?       burst-t
+     |  |  |        |        +--ro vrouter-interface:shared-policer?     string
+     |  |  |        |        +--ro vrouter-interface:stats
+     |  |  |        |           +--ro vrouter-interface:pass-packets?          uint64
+     |  |  |        |           +--ro vrouter-interface:pass-bytes?            uint64
+     |  |  |        |           +--ro vrouter-interface:pass-excess-packets?   uint64
+     |  |  |        |           +--ro vrouter-interface:pass-excess-bytes?     uint64
+     |  |  |        |           +--ro vrouter-interface:drop-packets?          uint64
+     |  |  |        |           +--ro vrouter-interface:drop-bytes?            uint64
+     |  |  |        +--ro vrouter-interface:egress!
+     |  |  |           +--ro vrouter-interface:rate-limit!
+     |  |  |           |  +--ro vrouter-interface:policer
+     |  |  |           |  |  +--ro vrouter-interface:bandwidth           rate-t
+     |  |  |           |  |  +--ro vrouter-interface:burst?              burst-t
+     |  |  |           |  |  +--ro vrouter-interface:excess-bandwidth?   rate-t
+     |  |  |           |  |  +--ro vrouter-interface:excess-burst?       burst-t
+     |  |  |           |  |  +--ro vrouter-interface:shared-policer?     string
+     |  |  |           |  |  +--ro vrouter-interface:stats
+     |  |  |           |  |     +--ro vrouter-interface:pass-packets?          uint64
+     |  |  |           |  |     +--ro vrouter-interface:pass-bytes?            uint64
+     |  |  |           |  |     +--ro vrouter-interface:pass-excess-packets?   uint64
+     |  |  |           |  |     +--ro vrouter-interface:pass-excess-bytes?     uint64
+     |  |  |           |  |     +--ro vrouter-interface:drop-packets?          uint64
+     |  |  |           |  |     +--ro vrouter-interface:drop-bytes?            uint64
+     |  |  |           |  +--ro vrouter-interface:shaper {advanced}?
+     |  |  |           |     +--ro vrouter-interface:bandwidth          rate-t
+     |  |  |           |     +--ro vrouter-interface:burst?             burst-t
+     |  |  |           |     +--ro vrouter-interface:layer1-overhead?   uint32
+     |  |  |           |     +--ro vrouter-interface:queue-size?        uint32
+     |  |  |           |     +--ro vrouter-interface:stats
+     |  |  |           |        +--ro vrouter-interface:pass-packets?   uint32
+     |  |  |           |        +--ro vrouter-interface:drop-packets?   uint32
+     |  |  |           +--ro vrouter-interface:scheduler! {advanced}?
+     |  |  |              +--ro vrouter-interface:core?      uint32
+     |  |  |              +--ro vrouter-interface:pq!
+     |  |  |              |  +--ro vrouter-interface:nb-queue    uint32
+     |  |  |              |  +--ro vrouter-interface:queue* [id]
+     |  |  |              |     +--ro vrouter-interface:id          uint32
+     |  |  |              |     +--ro vrouter-interface:size?       uint32
+     |  |  |              |     +--ro vrouter-interface:policer
+     |  |  |              |     |  +--ro vrouter-interface:bandwidth           rate-t
+     |  |  |              |     |  +--ro vrouter-interface:burst?              burst-t
+     |  |  |              |     |  +--ro vrouter-interface:excess-bandwidth?   rate-t
+     |  |  |              |     |  +--ro vrouter-interface:excess-burst?       burst-t
+     |  |  |              |     |  +--ro vrouter-interface:stats
+     |  |  |              |     |     +--ro vrouter-interface:pass-packets?          uint64
+     |  |  |              |     |     +--ro vrouter-interface:pass-bytes?            uint64
+     |  |  |              |     |     +--ro vrouter-interface:pass-excess-packets?   uint64
+     |  |  |              |     |     +--ro vrouter-interface:pass-excess-bytes?     uint64
+     |  |  |              |     |     +--ro vrouter-interface:drop-packets?          uint64
+     |  |  |              |     |     +--ro vrouter-interface:drop-bytes?            uint64
+     |  |  |              |     +--ro vrouter-interface:shaper
+     |  |  |              |     |  +--ro vrouter-interface:bandwidth          rate-t
+     |  |  |              |     |  +--ro vrouter-interface:burst?             burst-t
+     |  |  |              |     |  +--ro vrouter-interface:layer1-overhead?   uint32
+     |  |  |              |     |  +--ro vrouter-interface:queue-size?        uint32
+     |  |  |              |     |  +--ro vrouter-interface:stats
+     |  |  |              |     |     +--ro vrouter-interface:pass-packets?   uint32
+     |  |  |              |     |     +--ro vrouter-interface:drop-packets?   uint32
+     |  |  |              |     +--ro vrouter-interface:class* [mark]
+     |  |  |              |     |  +--ro vrouter-interface:mark     string
+     |  |  |              |     |  +--ro vrouter-interface:stats
+     |  |  |              |     |     +--ro vrouter-interface:match-packets?   uint32
+     |  |  |              |     +--ro vrouter-interface:stats
+     |  |  |              |     |  +--ro vrouter-interface:enqueue-packets?   uint32
+     |  |  |              |     |  +--ro vrouter-interface:xmit-packets?      uint32
+     |  |  |              |     |  +--ro vrouter-interface:drop-queue-full?   uint32
+     |  |  |              |     +--ro vrouter-interface:priority?   uint32
+     |  |  |              +--ro vrouter-interface:pb-dwrr!
+     |  |  |                 +--ro vrouter-interface:nb-queue    uint32
+     |  |  |                 +--ro vrouter-interface:queue* [id]
+     |  |  |                    +--ro vrouter-interface:id          uint32
+     |  |  |                    +--ro vrouter-interface:size?       uint32
+     |  |  |                    +--ro vrouter-interface:policer
+     |  |  |                    |  +--ro vrouter-interface:bandwidth           rate-t
+     |  |  |                    |  +--ro vrouter-interface:burst?              burst-t
+     |  |  |                    |  +--ro vrouter-interface:excess-bandwidth?   rate-t
+     |  |  |                    |  +--ro vrouter-interface:excess-burst?       burst-t
+     |  |  |                    |  +--ro vrouter-interface:stats
+     |  |  |                    |     +--ro vrouter-interface:pass-packets?          uint64
+     |  |  |                    |     +--ro vrouter-interface:pass-bytes?            uint64
+     |  |  |                    |     +--ro vrouter-interface:pass-excess-packets?   uint64
+     |  |  |                    |     +--ro vrouter-interface:pass-excess-bytes?     uint64
+     |  |  |                    |     +--ro vrouter-interface:drop-packets?          uint64
+     |  |  |                    |     +--ro vrouter-interface:drop-bytes?            uint64
+     |  |  |                    +--ro vrouter-interface:shaper
+     |  |  |                    |  +--ro vrouter-interface:bandwidth          rate-t
+     |  |  |                    |  +--ro vrouter-interface:burst?             burst-t
+     |  |  |                    |  +--ro vrouter-interface:layer1-overhead?   uint32
+     |  |  |                    |  +--ro vrouter-interface:queue-size?        uint32
+     |  |  |                    |  +--ro vrouter-interface:stats
+     |  |  |                    |     +--ro vrouter-interface:pass-packets?   uint32
+     |  |  |                    |     +--ro vrouter-interface:drop-packets?   uint32
+     |  |  |                    +--ro vrouter-interface:class* [mark]
+     |  |  |                    |  +--ro vrouter-interface:mark     string
+     |  |  |                    |  +--ro vrouter-interface:stats
+     |  |  |                    |     +--ro vrouter-interface:match-packets?   uint32
+     |  |  |                    +--ro vrouter-interface:stats
+     |  |  |                    |  +--ro vrouter-interface:enqueue-packets?   uint32
+     |  |  |                    |  +--ro vrouter-interface:xmit-packets?      uint32
+     |  |  |                    |  +--ro vrouter-interface:drop-queue-full?   uint32
+     |  |  |                    +--ro vrouter-interface:quantum?    uint32
+     |  |  |                    +--ro vrouter-interface:priority?   pb-dwrr-prio-t
+     |  |  +--ro vrouter-ntp:ntp
+     |  |     +--ro vrouter-ntp:enabled?              boolean
+     |  |     +--ro vrouter-ntp:ntp-source-address?   vr-inet:ip-address
+     |  |     +--ro vrouter-ntp:auth-key* [key-id]
+     |  |     |  +--ro vrouter-ntp:key-id       uint16
+     |  |     |  +--ro vrouter-ntp:key-value?   string
+     |  |     +--ro vrouter-ntp:server-subnet* [num]
+     |  |     |  +--ro vrouter-ntp:num      uint16
+     |  |     |  +--ro vrouter-ntp:allow?   union
+     |  |     |  +--ro vrouter-ntp:deny?    union
+     |  |     +--ro vrouter-ntp:server* [address]
+     |  |        +--ro vrouter-ntp:address             vr-inet:host
+     |  |        +--ro vrouter-ntp:version?            uint8
+     |  |        +--ro vrouter-ntp:association-type?   enumeration
+     |  |        +--ro vrouter-ntp:iburst?             boolean
+     |  |        +--ro vrouter-ntp:prefer?             boolean
+     |  |        +--ro vrouter-ntp:stratum?            uint8
+     |  |        +--ro vrouter-ntp:root-delay?         uint32
+     |  |        +--ro vrouter-ntp:root-dispersion?    uint64
+     |  |        +--ro vrouter-ntp:offset?             uint64
+     |  |        +--ro vrouter-ntp:poll-interval?      uint32
+     |  |        +--ro vrouter-ntp:synchronized?       boolean
+     |  |        +--ro vrouter-ntp:state?              enumeration
+     |  |        +--ro vrouter-ntp:auth-key-id?        uint16
+     |  +--ro vrouter-system:network-stack
+     |  |  +--ro vrouter-system:bridge
+     |  |  |  +--ro vrouter-system:call-ipv4-filtering?   boolean
+     |  |  |  +--ro vrouter-system:call-ipv6-filtering?   boolean
+     |  |  +--ro vrouter-system:icmp
+     |  |  |  +--ro vrouter-system:ignore-icmp-echo-broadcast?   boolean
+     |  |  |  +--ro vrouter-system:rate-limit-icmp?              uint16
+     |  |  |  +--ro vrouter-system:rate-mask-icmp?               bits
+     |  |  +--ro vrouter-system:ipv4
+     |  |  |  +--ro vrouter-system:forwarding?              boolean
+     |  |  |  +--ro vrouter-system:send-redirects?          boolean
+     |  |  |  +--ro vrouter-system:accept-redirects?        boolean
+     |  |  |  +--ro vrouter-system:accept-source-route?     boolean
+     |  |  |  +--ro vrouter-system:arp-announce?            enumeration
+     |  |  |  +--ro vrouter-system:arp-filter?              boolean
+     |  |  |  +--ro vrouter-system:arp-ignore?              enumeration
+     |  |  |  +--ro vrouter-system:arp-proxy?               boolean
+     |  |  |  +--ro vrouter-system:log-invalid-addresses?   boolean
+     |  |  +--ro vrouter-system:ipv6
+     |  |  |  +--ro vrouter-system:forwarding?                boolean
+     |  |  |  +--ro vrouter-system:autoconfiguration?         boolean
+     |  |  |  +--ro vrouter-system:accept-router-advert?      enumeration
+     |  |  |  +--ro vrouter-system:accept-redirects?          boolean
+     |  |  |  +--ro vrouter-system:accept-source-route?       boolean
+     |  |  |  +--ro vrouter-system:router-solicitations?      int16
+     |  |  |  +--ro vrouter-system:use-temporary-addresses?   enumeration
+     |  |  +--ro vrouter-system:neighbor
+     |  |  |  +--ro vrouter-system:ipv4-max-entries?   uint32
+     |  |  |  +--ro vrouter-system:ipv6-max-entries?   uint32
+     |  |  +--ro vrouter-system:conntrack
+     |  |     +--ro vrouter-system:max-entries?                  uint32
+     |  |     +--ro vrouter-system:tcp-timeout-close?            uint32
+     |  |     +--ro vrouter-system:tcp-timeout-close-wait?       uint32
+     |  |     +--ro vrouter-system:tcp-timeout-established?      uint32
+     |  |     +--ro vrouter-system:tcp-timeout-fin-wait?         uint32
+     |  |     +--ro vrouter-system:tcp-timeout-last-ack?         uint32
+     |  |     +--ro vrouter-system:tcp-timeout-max-retrans?      uint32
+     |  |     +--ro vrouter-system:tcp-timeout-syn-recv?         uint32
+     |  |     +--ro vrouter-system:tcp-timeout-syn-sent?         uint32
+     |  |     +--ro vrouter-system:tcp-timeout-time-wait?        uint32
+     |  |     +--ro vrouter-system:tcp-timeout-unacknowledged?   uint32
+     |  |     +--ro vrouter-system:udp-timeout?                  uint32
+     |  |     +--ro vrouter-system:udp-timeout-stream?           uint32
+     |  +--ro vrouter-interface:interface
+     |  |  +--ro vrouter-interface:physical* [name]
+     |  |     +--ro vrouter-interface:name                vrouter-types:ifname
+     |  |     +--ro vrouter-interface:mtu?                uint32
+     |  |     +--ro vrouter-interface:promiscuous?        boolean
+     |  |     +--ro vrouter-interface:description?        string
+     |  |     +--ro vrouter-interface:enabled?            boolean
+     |  |     +--ro vrouter-interface:port?               string
+     |  |     +--ro vrouter-interface:rx-cp-protection?   boolean
+     |  |     +--ro vrouter-interface:tx-cp-protection?   boolean
+     |  |     +--ro vrouter-interface:ifindex?            uint32
+     |  |     +--ro vrouter-interface:admin-status        enumeration
+     |  |     +--ro vrouter-interface:oper-status         enumeration
+     |  |     +--ro vrouter-interface:last-change?        vr-types:timeticks64
+     |  |     +--ro vrouter-interface:counters
+     |  |     |  +--ro vrouter-interface:in-octets?          vr-types:counter64
+     |  |     |  +--ro vrouter-interface:in-unicast-pkts?    vr-types:counter64
+     |  |     |  +--ro vrouter-interface:in-discards?        vr-types:counter64
+     |  |     |  +--ro vrouter-interface:in-errors?          vr-types:counter64
+     |  |     |  +--ro vrouter-interface:out-octets?         vr-types:counter64
+     |  |     |  +--ro vrouter-interface:out-unicast-pkts?   vr-types:counter64
+     |  |     |  +--ro vrouter-interface:out-discards?       vr-types:counter64
+     |  |     |  +--ro vrouter-interface:out-errors?         vr-types:counter64
+     |  |     +--ro vrouter-interface:ipv4
+     |  |     |  +--ro vrouter-interface:address* [ip]
+     |  |     |  |  +--ro vrouter-interface:ip        union
+     |  |     |  |  +--ro vrouter-interface:peer?     vr-inet:ipv4-address
+     |  |     |  |  +--ro vrouter-interface:origin?   ip-address-origin
+     |  |     |  +--ro vrouter-interface:enabled?    boolean
+     |  |     |  +--ro vrouter-interface:neighbor* [ip]
+     |  |     |  |  +--ro vrouter-interface:ip                    vr-inet:ipv4-address
+     |  |     |  |  +--ro vrouter-interface:link-layer-address?   vr-if:mac-address
+     |  |     |  |  +--ro vrouter-interface:state                 neighbor-state
+     |  |     |  +--ro vrouter-interface:dhcp
+     |  |     |     +--ro vrouter-interface:enabled?                        boolean
+     |  |     |     +--ro vrouter-interface:timeout?                        uint32
+     |  |     |     +--ro vrouter-interface:retry?                          uint32
+     |  |     |     +--ro vrouter-interface:select-timeout?                 uint32
+     |  |     |     +--ro vrouter-interface:reboot?                         uint32
+     |  |     |     +--ro vrouter-interface:initial-interval?               uint32
+     |  |     |     +--ro vrouter-interface:dhcp-lease-time?                uint32
+     |  |     |     +--ro vrouter-interface:dhcp-client-identifier-ascii?   string
+     |  |     |     +--ro vrouter-interface:dhcp-client-identifier-hexa?    string
+     |  |     |     +--ro vrouter-interface:host-name?                      string
+     |  |     |     +--ro vrouter-interface:current-lease
+     |  |     |     |  +--ro vrouter-interface:fixed-address?   vr-inet:ipv4-address
+     |  |     |     |  +--ro vrouter-interface:renew?           string
+     |  |     |     |  +--ro vrouter-interface:rebind?          string
+     |  |     |     |  +--ro vrouter-interface:expire?          string
+     |  |     |     +--ro vrouter-interface:request*                        dhcp-request
+     |  |     +--ro vrouter-interface:ipv6
+     |  |     |  +--ro vrouter-interface:address* [ip]
+     |  |     |  |  +--ro vrouter-interface:ip        union
+     |  |     |  |  +--ro vrouter-interface:peer?     vr-inet:ipv6-address
+     |  |     |  |  +--ro vrouter-interface:origin?   ip-address-origin
+     |  |     |  |  +--ro vrouter-interface:status?   enumeration
+     |  |     |  +--ro vrouter-interface:enabled?    boolean
+     |  |     |  +--ro vrouter-interface:neighbor* [ip]
+     |  |     |     +--ro vrouter-interface:ip                    vr-inet:ipv6-address
+     |  |     |     +--ro vrouter-interface:link-layer-address?   vr-if:mac-address
+     |  |     |     +--ro vrouter-interface:router?               boolean
+     |  |     |     +--ro vrouter-interface:state                 neighbor-state
+     |  |     +--ro vrouter-interface:network-stack
+     |  |     |  +--ro vrouter-interface:ipv4
+     |  |     |  |  +--ro vrouter-interface:send-redirects?          boolean
+     |  |     |  |  +--ro vrouter-interface:accept-redirects?        boolean
+     |  |     |  |  +--ro vrouter-interface:accept-source-route?     boolean
+     |  |     |  |  +--ro vrouter-interface:arp-announce?            enumeration
+     |  |     |  |  +--ro vrouter-interface:arp-filter?              boolean
+     |  |     |  |  +--ro vrouter-interface:arp-ignore?              enumeration
+     |  |     |  |  +--ro vrouter-interface:arp-proxy?               boolean
+     |  |     |  |  +--ro vrouter-interface:log-invalid-addresses?   boolean
+     |  |     |  +--ro vrouter-interface:ipv6
+     |  |     |     +--ro vrouter-interface:autoconfiguration?         boolean
+     |  |     |     +--ro vrouter-interface:accept-router-advert?      enumeration
+     |  |     |     +--ro vrouter-interface:accept-redirects?          boolean
+     |  |     |     +--ro vrouter-interface:accept-source-route?       boolean
+     |  |     |     +--ro vrouter-interface:router-solicitations?      int16
+     |  |     |     +--ro vrouter-interface:use-temporary-addresses?   enumeration
+     |  |     +--ro vrouter-interface:ethernet
+     |  |     |  +--ro vrouter-interface:mac-address?       mac-address
+     |  |     |  +--ro vrouter-interface:auto-negotiate?    boolean
+     |  |     |  +--ro vrouter-interface:duplex-mode?       enumeration
+     |  |     |  +--ro vrouter-interface:port-speed?        enumeration
+     |  |     |  +--ro vrouter-interface:flow-control-rx?   boolean
+     |  |     |  +--ro vrouter-interface:flow-control-tx?   boolean
+     |  |     +--ro vrouter-interface:qos!
+     |  |        +--ro vrouter-interface:ingress!
+     |  |        |  +--ro vrouter-interface:rate-limit!
+     |  |        |     +--ro vrouter-interface:policer
+     |  |        |        +--ro vrouter-interface:bandwidth           rate-t
+     |  |        |        +--ro vrouter-interface:burst?              burst-t
+     |  |        |        +--ro vrouter-interface:excess-bandwidth?   rate-t
+     |  |        |        +--ro vrouter-interface:excess-burst?       burst-t
+     |  |        |        +--ro vrouter-interface:shared-policer?     string
+     |  |        |        +--ro vrouter-interface:stats
+     |  |        |           +--ro vrouter-interface:pass-packets?          uint64
+     |  |        |           +--ro vrouter-interface:pass-bytes?            uint64
+     |  |        |           +--ro vrouter-interface:pass-excess-packets?   uint64
+     |  |        |           +--ro vrouter-interface:pass-excess-bytes?     uint64
+     |  |        |           +--ro vrouter-interface:drop-packets?          uint64
+     |  |        |           +--ro vrouter-interface:drop-bytes?            uint64
+     |  |        +--ro vrouter-interface:egress!
+     |  |           +--ro vrouter-interface:rate-limit!
+     |  |           |  +--ro vrouter-interface:policer
+     |  |           |  |  +--ro vrouter-interface:bandwidth           rate-t
+     |  |           |  |  +--ro vrouter-interface:burst?              burst-t
+     |  |           |  |  +--ro vrouter-interface:excess-bandwidth?   rate-t
+     |  |           |  |  +--ro vrouter-interface:excess-burst?       burst-t
+     |  |           |  |  +--ro vrouter-interface:shared-policer?     string
+     |  |           |  |  +--ro vrouter-interface:stats
+     |  |           |  |     +--ro vrouter-interface:pass-packets?          uint64
+     |  |           |  |     +--ro vrouter-interface:pass-bytes?            uint64
+     |  |           |  |     +--ro vrouter-interface:pass-excess-packets?   uint64
+     |  |           |  |     +--ro vrouter-interface:pass-excess-bytes?     uint64
+     |  |           |  |     +--ro vrouter-interface:drop-packets?          uint64
+     |  |           |  |     +--ro vrouter-interface:drop-bytes?            uint64
+     |  |           |  +--ro vrouter-interface:shaper {advanced}?
+     |  |           |     +--ro vrouter-interface:bandwidth          rate-t
+     |  |           |     +--ro vrouter-interface:burst?             burst-t
+     |  |           |     +--ro vrouter-interface:layer1-overhead?   uint32
+     |  |           |     +--ro vrouter-interface:queue-size?        uint32
+     |  |           |     +--ro vrouter-interface:stats
+     |  |           |        +--ro vrouter-interface:pass-packets?   uint32
+     |  |           |        +--ro vrouter-interface:drop-packets?   uint32
+     |  |           +--ro vrouter-interface:scheduler! {advanced}?
+     |  |              +--ro vrouter-interface:core?      uint32
+     |  |              +--ro vrouter-interface:pq!
+     |  |              |  +--ro vrouter-interface:nb-queue    uint32
+     |  |              |  +--ro vrouter-interface:queue* [id]
+     |  |              |     +--ro vrouter-interface:id          uint32
+     |  |              |     +--ro vrouter-interface:size?       uint32
+     |  |              |     +--ro vrouter-interface:policer
+     |  |              |     |  +--ro vrouter-interface:bandwidth           rate-t
+     |  |              |     |  +--ro vrouter-interface:burst?              burst-t
+     |  |              |     |  +--ro vrouter-interface:excess-bandwidth?   rate-t
+     |  |              |     |  +--ro vrouter-interface:excess-burst?       burst-t
+     |  |              |     |  +--ro vrouter-interface:stats
+     |  |              |     |     +--ro vrouter-interface:pass-packets?          uint64
+     |  |              |     |     +--ro vrouter-interface:pass-bytes?            uint64
+     |  |              |     |     +--ro vrouter-interface:pass-excess-packets?   uint64
+     |  |              |     |     +--ro vrouter-interface:pass-excess-bytes?     uint64
+     |  |              |     |     +--ro vrouter-interface:drop-packets?          uint64
+     |  |              |     |     +--ro vrouter-interface:drop-bytes?            uint64
+     |  |              |     +--ro vrouter-interface:shaper
+     |  |              |     |  +--ro vrouter-interface:bandwidth          rate-t
+     |  |              |     |  +--ro vrouter-interface:burst?             burst-t
+     |  |              |     |  +--ro vrouter-interface:layer1-overhead?   uint32
+     |  |              |     |  +--ro vrouter-interface:queue-size?        uint32
+     |  |              |     |  +--ro vrouter-interface:stats
+     |  |              |     |     +--ro vrouter-interface:pass-packets?   uint32
+     |  |              |     |     +--ro vrouter-interface:drop-packets?   uint32
+     |  |              |     +--ro vrouter-interface:class* [mark]
+     |  |              |     |  +--ro vrouter-interface:mark     string
+     |  |              |     |  +--ro vrouter-interface:stats
+     |  |              |     |     +--ro vrouter-interface:match-packets?   uint32
+     |  |              |     +--ro vrouter-interface:stats
+     |  |              |     |  +--ro vrouter-interface:enqueue-packets?   uint32
+     |  |              |     |  +--ro vrouter-interface:xmit-packets?      uint32
+     |  |              |     |  +--ro vrouter-interface:drop-queue-full?   uint32
+     |  |              |     +--ro vrouter-interface:priority?   uint32
+     |  |              +--ro vrouter-interface:pb-dwrr!
+     |  |                 +--ro vrouter-interface:nb-queue    uint32
+     |  |                 +--ro vrouter-interface:queue* [id]
+     |  |                    +--ro vrouter-interface:id          uint32
+     |  |                    +--ro vrouter-interface:size?       uint32
+     |  |                    +--ro vrouter-interface:policer
+     |  |                    |  +--ro vrouter-interface:bandwidth           rate-t
+     |  |                    |  +--ro vrouter-interface:burst?              burst-t
+     |  |                    |  +--ro vrouter-interface:excess-bandwidth?   rate-t
+     |  |                    |  +--ro vrouter-interface:excess-burst?       burst-t
+     |  |                    |  +--ro vrouter-interface:stats
+     |  |                    |     +--ro vrouter-interface:pass-packets?          uint64
+     |  |                    |     +--ro vrouter-interface:pass-bytes?            uint64
+     |  |                    |     +--ro vrouter-interface:pass-excess-packets?   uint64
+     |  |                    |     +--ro vrouter-interface:pass-excess-bytes?     uint64
+     |  |                    |     +--ro vrouter-interface:drop-packets?          uint64
+     |  |                    |     +--ro vrouter-interface:drop-bytes?            uint64
+     |  |                    +--ro vrouter-interface:shaper
+     |  |                    |  +--ro vrouter-interface:bandwidth          rate-t
+     |  |                    |  +--ro vrouter-interface:burst?             burst-t
+     |  |                    |  +--ro vrouter-interface:layer1-overhead?   uint32
+     |  |                    |  +--ro vrouter-interface:queue-size?        uint32
+     |  |                    |  +--ro vrouter-interface:stats
+     |  |                    |     +--ro vrouter-interface:pass-packets?   uint32
+     |  |                    |     +--ro vrouter-interface:drop-packets?   uint32
+     |  |                    +--ro vrouter-interface:class* [mark]
+     |  |                    |  +--ro vrouter-interface:mark     string
+     |  |                    |  +--ro vrouter-interface:stats
+     |  |                    |     +--ro vrouter-interface:match-packets?   uint32
+     |  |                    +--ro vrouter-interface:stats
+     |  |                    |  +--ro vrouter-interface:enqueue-packets?   uint32
+     |  |                    |  +--ro vrouter-interface:xmit-packets?      uint32
+     |  |                    |  +--ro vrouter-interface:drop-queue-full?   uint32
+     |  |                    +--ro vrouter-interface:quantum?    uint32
+     |  |                    +--ro vrouter-interface:priority?   pb-dwrr-prio-t
+     |  +--ro vrouter-ntp:ntp
+     |     +--ro vrouter-ntp:enabled?              boolean
+     |     +--ro vrouter-ntp:ntp-source-address?   vr-inet:ip-address
+     |     +--ro vrouter-ntp:auth-key* [key-id]
+     |     |  +--ro vrouter-ntp:key-id       uint16
+     |     |  +--ro vrouter-ntp:key-value?   string
+     |     +--ro vrouter-ntp:server-subnet* [num]
+     |     |  +--ro vrouter-ntp:num      uint16
+     |     |  +--ro vrouter-ntp:allow?   union
+     |     |  +--ro vrouter-ntp:deny?    union
+     |     +--ro vrouter-ntp:server* [address]
+     |     |  +--ro vrouter-ntp:address             vr-inet:host
+     |     |  +--ro vrouter-ntp:version?            uint8
+     |     |  +--ro vrouter-ntp:association-type?   enumeration
+     |     |  +--ro vrouter-ntp:iburst?             boolean
+     |     |  +--ro vrouter-ntp:prefer?             boolean
+     |     |  +--ro vrouter-ntp:stratum?            uint8
+     |     |  +--ro vrouter-ntp:root-delay?         uint32
+     |     |  +--ro vrouter-ntp:root-dispersion?    uint64
+     |     |  +--ro vrouter-ntp:offset?             uint64
+     |     |  +--ro vrouter-ntp:poll-interval?      uint32
+     |     |  +--ro vrouter-ntp:synchronized?       boolean
+     |     |  +--ro vrouter-ntp:state?              enumeration
+     |     |  +--ro vrouter-ntp:auth-key-id?        uint16
+     |     +--ro vrouter-ntp:time-sources
+     |        +--ro vrouter-ntp:server* [address]
+     |           +--ro vrouter-ntp:address             vr-inet:host
+     |           +--ro vrouter-ntp:version?            uint8
+     |           +--ro vrouter-ntp:association-type?   enumeration
+     |           +--ro vrouter-ntp:iburst?             boolean
+     |           +--ro vrouter-ntp:prefer?             boolean
+     |           +--ro vrouter-ntp:stratum?            uint8
+     |           +--ro vrouter-ntp:root-delay?         uint32
+     |           +--ro vrouter-ntp:root-dispersion?    uint64
+     |           +--ro vrouter-ntp:offset?             uint64
+     |           +--ro vrouter-ntp:poll-interval?      uint32
+     |           +--ro vrouter-ntp:synchronized?       boolean
+     |           +--ro vrouter-ntp:state?              enumeration
+     |           +--ro vrouter-ntp:auth-key-id?        uint16
+     +--ro vrouter-system:system
+     |  +--ro vrouter-system:hostname?                 vr-inet:domain-name
+     |  +--ro vrouter-system:cp-mask?                  union
+     |  +--ro vrouter-system:network-stack
+     |  |  +--ro vrouter-system:bridge
+     |  |  |  +--ro vrouter-system:call-ipv4-filtering?   boolean
+     |  |  |  +--ro vrouter-system:call-ipv6-filtering?   boolean
+     |  |  +--ro vrouter-system:icmp
+     |  |  |  +--ro vrouter-system:ignore-icmp-echo-broadcast?   boolean
+     |  |  |  +--ro vrouter-system:rate-limit-icmp?              uint16
+     |  |  |  +--ro vrouter-system:rate-mask-icmp?               bits
+     |  |  +--ro vrouter-system:ipv4
+     |  |  |  +--ro vrouter-system:forwarding?              boolean
+     |  |  |  +--ro vrouter-system:send-redirects?          boolean
+     |  |  |  +--ro vrouter-system:accept-redirects?        boolean
+     |  |  |  +--ro vrouter-system:accept-source-route?     boolean
+     |  |  |  +--ro vrouter-system:arp-announce?            enumeration
+     |  |  |  +--ro vrouter-system:arp-filter?              boolean
+     |  |  |  +--ro vrouter-system:arp-ignore?              enumeration
+     |  |  |  +--ro vrouter-system:arp-proxy?               boolean
+     |  |  |  +--ro vrouter-system:log-invalid-addresses?   boolean
+     |  |  +--ro vrouter-system:ipv6
+     |  |  |  +--ro vrouter-system:forwarding?                boolean
+     |  |  |  +--ro vrouter-system:autoconfiguration?         boolean
+     |  |  |  +--ro vrouter-system:accept-router-advert?      enumeration
+     |  |  |  +--ro vrouter-system:accept-redirects?          boolean
+     |  |  |  +--ro vrouter-system:accept-source-route?       boolean
+     |  |  |  +--ro vrouter-system:router-solicitations?      int16
+     |  |  |  +--ro vrouter-system:use-temporary-addresses?   enumeration
+     |  |  +--ro vrouter-system:neighbor
+     |  |  |  +--ro vrouter-system:ipv4-max-entries?           uint32
+     |  |  |  +--ro vrouter-system:ipv6-max-entries?           uint32
+     |  |  |  +--ro vrouter-system:ipv4-base-reachable-time?   uint32
+     |  |  |  +--ro vrouter-system:ipv6-base-reachable-time?   uint32
+     |  |  +--ro vrouter-system:conntrack
+     |  |     +--ro vrouter-system:max-entries?                  uint32
+     |  |     +--ro vrouter-system:tcp-timeout-close?            uint32
+     |  |     +--ro vrouter-system:tcp-timeout-close-wait?       uint32
+     |  |     +--ro vrouter-system:tcp-timeout-established?      uint32
+     |  |     +--ro vrouter-system:tcp-timeout-fin-wait?         uint32
+     |  |     +--ro vrouter-system:tcp-timeout-last-ack?         uint32
+     |  |     +--ro vrouter-system:tcp-timeout-max-retrans?      uint32
+     |  |     +--ro vrouter-system:tcp-timeout-syn-recv?         uint32
+     |  |     +--ro vrouter-system:tcp-timeout-syn-sent?         uint32
+     |  |     +--ro vrouter-system:tcp-timeout-time-wait?        uint32
+     |  |     +--ro vrouter-system:tcp-timeout-unacknowledged?   uint32
+     |  |     +--ro vrouter-system:udp-timeout?                  uint32
+     |  |     +--ro vrouter-system:udp-timeout-stream?           uint32
+     |  +--ro vrouter-system:timezone?                 string
+     |  +--ro vrouter-system:date?                     string
+     |  +--ro vrouter-system:troubleshooting-report*   string
+     |  +--ro vrouter-system:traffic-capture*          string
+     |  +--ro vrouter-fast-path:fast-path!
+     |     +--ro vrouter-fast-path:enabled?          union
+     |     +--ro vrouter-fast-path:port*             union
+     |     +--ro vrouter-fast-path:core-mask
+     |     |  +--ro vrouter-fast-path:fast-path?     union
+     |     |  +--ro vrouter-fast-path:exception?     vr-types:coremask
+     |     |  +--ro vrouter-fast-path:linux-to-fp?   vr-types:coremask
+     |     |  x--ro vrouter-fast-path:qos?           vr-types:coremask
+     |     |  +--ro vrouter-fast-path:port?          string
+     |     +--ro vrouter-fast-path:cpu-usage* [cpu]
+     |     |  +--ro vrouter-fast-path:cpu     string
+     |     |  +--ro vrouter-fast-path:busy?   uint16
+     |     +--ro vrouter-fast-path:cp-protection
+     |     |  +--ro vrouter-fast-path:budget?   int16
+     |     +--ro vrouter-fast-path:crypto
+     |     |  +--ro vrouter-fast-path:driver?              enumeration
+     |     |  +--ro vrouter-fast-path:offload-core-mask?   union
+     |     |  +--ro vrouter-fast-path:nb-session?          uint32
+     |     |  +--ro vrouter-fast-path:nb-buffer?           uint32
+     |     +--ro vrouter-fast-path:advanced
+     |     |  +--ro vrouter-fast-path:nb-mbuf?                             string
+     |     |  +--ro vrouter-fast-path:machine-memory?                      uint32
+     |     |  +--ro vrouter-fast-path:mainloop-sleep-delay?                uint16
+     |     |  +--ro vrouter-fast-path:offload?                             boolean
+     |     |  +--ro vrouter-fast-path:vlan-strip?                          boolean
+     |     |  +--ro vrouter-fast-path:intercore-ring-size?                 uint16
+     |     |  +--ro vrouter-fast-path:software-txq?                        uint16
+     |     |  +--ro vrouter-fast-path:nb-rxd?                              uint16
+     |     |  +--ro vrouter-fast-path:nb-txd?                              uint16
+     |     |  +--ro vrouter-fast-path:reserve-hugepages?                   boolean
+     |     |  +--ro vrouter-fast-path:ipv4-netfilter-cache?                boolean
+     |     |  +--ro vrouter-fast-path:ipv6-netfilter-cache?                boolean
+     |     |  +--ro vrouter-fast-path:hardware-queue-map* [port index queue]
+     |     |  |  +--ro vrouter-fast-path:port     vr-types:pci-port-name
+     |     |  |  +--ro vrouter-fast-path:index    uint16
+     |     |  |  +--ro vrouter-fast-path:queue    uint16
+     |     |  +--ro vrouter-fast-path:ipv4-pre-ipsec-fragmentation?        enumeration
+     |     |  +--ro vrouter-fast-path:ipv6-pre-ipsec-fragmentation?        enumeration
+     |     |  +--ro vrouter-fast-path:ipv6-lpm-long-prefix-optimization?   boolean
+     |     +--ro vrouter-fast-path:limits
+     |     |  +--ro vrouter-fast-path:fp-cur-if?                uint32
+     |     |  +--ro vrouter-fast-path:fp-cur-vrf?               uint32
+     |     |  +--ro vrouter-fast-path:ip4-cur-addr?             uint32
+     |     |  +--ro vrouter-fast-path:ip4-cur-route?            uint32
+     |     |  +--ro vrouter-fast-path:ip4-cur-neigh?            uint32
+     |     |  +--ro vrouter-fast-path:ip6-cur-addr?             uint32
+     |     |  +--ro vrouter-fast-path:ip6-cur-route?            uint32
+     |     |  +--ro vrouter-fast-path:ip6-cur-neigh?            uint32
+     |     |  +--ro vrouter-fast-path:pbr-cur-rule?             uint32
+     |     |  +--ro vrouter-fast-path:filter4-cur-rule?         uint32
+     |     |  +--ro vrouter-fast-path:filter6-cur-rule?         uint32
+     |     |  +--ro vrouter-fast-path:filter4-cur-ct?           uint32
+     |     |  +--ro vrouter-fast-path:filter6-cur-ct?           uint32
+     |     |  +--ro vrouter-fast-path:filter-cur-ipset?         uint32
+     |     |  +--ro vrouter-fast-path:vxlan-cur-port?           uint32
+     |     |  +--ro vrouter-fast-path:vxlan-cur-if?             uint32
+     |     |  +--ro vrouter-fast-path:vxlan-cur-fdb?            uint32
+     |     |  +--ro vrouter-fast-path:ipsec-cur-sp?             uint32
+     |     |  +--ro vrouter-fast-path:ipsec-cur-sa?             uint32
+     |     |  +--ro vrouter-fast-path:ip-cur-lpm-table?         uint32
+     |     |  +--ro vrouter-fast-path:ip-cur-lpm-memory?        uint32
+     |     |  +--ro vrouter-fast-path:vlan-cur-if?              uint32
+     |     |  +--ro vrouter-fast-path:macvlan-cur-if?           uint32
+     |     |  +--ro vrouter-fast-path:gre-cur-if?               uint32
+     |     |  +--ro vrouter-fast-path:svti-cur-if?              uint32
+     |     |  +--ro vrouter-fast-path:pppoe-cur-channel?        uint32
+     |     |  +--ro vrouter-fast-path:mpls-cur-route?           uint32
+     |     |  +--ro vrouter-fast-path:mpls-cur-lwt?             uint32
+     |     |  +--ro vrouter-fast-path:fp-max-if?                uint32
+     |     |  +--ro vrouter-fast-path:fp-max-vrf?               uint32
+     |     |  +--ro vrouter-fast-path:ip4-max-addr?             uint32
+     |     |  +--ro vrouter-fast-path:ip4-max-route?            uint32
+     |     |  +--ro vrouter-fast-path:ip4-max-neigh?            uint32
+     |     |  +--ro vrouter-fast-path:ip6-max-addr?             uint32
+     |     |  +--ro vrouter-fast-path:ip6-max-route?            uint32
+     |     |  +--ro vrouter-fast-path:ip6-max-neigh?            uint32
+     |     |  +--ro vrouter-fast-path:pbr-max-rule?             uint32
+     |     |  +--ro vrouter-fast-path:filter4-max-rule?         uint32
+     |     |  +--ro vrouter-fast-path:filter6-max-rule?         uint32
+     |     |  +--ro vrouter-fast-path:filter4-max-ct?           uint32
+     |     |  +--ro vrouter-fast-path:filter6-max-ct?           uint32
+     |     |  +--ro vrouter-fast-path:filter-max-ipset?         uint32
+     |     |  +--ro vrouter-fast-path:filter-max-ipset-entry?   uint32
+     |     |  +--ro vrouter-fast-path:filter-bridge-max-rule?   uint32
+     |     |  +--ro vrouter-fast-path:vxlan-max-port?           uint32
+     |     |  +--ro vrouter-fast-path:vxlan-max-if?             uint32
+     |     |  +--ro vrouter-fast-path:vxlan-max-fdb?            uint32
+     |     |  +--ro vrouter-fast-path:reass4-max-queue?         uint32
+     |     |  +--ro vrouter-fast-path:reass6-max-queue?         uint32
+     |     |  +--ro vrouter-fast-path:ipsec-max-sp?             uint32
+     |     |  +--ro vrouter-fast-path:ipsec-max-sa?             uint32
+     |     |  +--ro vrouter-fast-path:ip-max-lpm-table?         uint32
+     |     |  +--ro vrouter-fast-path:ip-max-lpm-memory?        uint32
+     |     |  +--ro vrouter-fast-path:filter-max-cache?         uint32
+     |     |  +--ro vrouter-fast-path:filter6-max-cache?        uint32
+     |     |  +--ro vrouter-fast-path:vlan-max-if?              uint32
+     |     |  +--ro vrouter-fast-path:macvlan-max-if?           uint32
+     |     |  +--ro vrouter-fast-path:gre-max-if?               uint32
+     |     |  +--ro vrouter-fast-path:svti-max-if?              uint32
+     |     |  +--ro vrouter-fast-path:pppoe-max-channel?        uint32
+     |     |  +--ro vrouter-fast-path:mpls-max-label?           uint8
+     |     |  +--ro vrouter-fast-path:mpls-max-route?           uint32
+     |     |  +--ro vrouter-fast-path:mpls-max-lwt?             uint32
+     |     +--ro vrouter-fast-path:linux-sync
+     |     |  +--ro vrouter-fast-path:fpm-socket-size?    uint32
+     |     |  +--ro vrouter-fast-path:nl-socket-size?     uint32
+     |     |  +--ro vrouter-fast-path:ipset-dump-delay?   uint32
+     |     |  +--ro vrouter-fast-path:disable*            enumeration
+     |     +--ro vrouter-fast-path:mirror-traffic
+     |        +--ro vrouter-fast-path:from* [interface vrf type]
+     |           +--ro vrouter-fast-path:interface    vr-types:ifname
+     |           +--ro vrouter-fast-path:vrf          vrouter:vrf-name
+     |           +--ro vrouter-fast-path:type         union
+     |           +--ro vrouter-fast-path:to
+     |              +--ro vrouter-fast-path:interface    vr-types:ifname
+     |              +--ro vrouter-fast-path:vrf          vrouter:vrf-name
+     +--ro vrouter-qos:qos!
+        +--ro vrouter-qos:shared-policer* [name]
+           +--ro vrouter-qos:name                string
+           +--ro vrouter-qos:bandwidth           rate-t
+           +--ro vrouter-qos:burst?              burst-t
+           +--ro vrouter-qos:excess-bandwidth?   rate-t
+           +--ro vrouter-qos:excess-burst?       burst-t
+           +--ro vrouter-qos:stats
+              +--ro vrouter-qos:pass-packets?          uint64
+              +--ro vrouter-qos:pass-bytes?            uint64
+              +--ro vrouter-qos:pass-excess-packets?   uint64
+              +--ro vrouter-qos:pass-excess-bytes?     uint64
+              +--ro vrouter-qos:drop-packets?          uint64
+              +--ro vrouter-qos:drop-bytes?            uint64
+
+module: vrouter-commands
+
+  rpcs:
+    +---x convert-to-text
+    |  +---w input
+    |  |  +---w input     string
+    |  |  +---w output    string
+    |  +--ro output
+    |     +--ro buffer?   string
+    +---x get-command-status
+    |  +---w input
+    |  |  +---w uid    uint64
+    |  +--ro output
+    |     +--ro buffer?      string
+    |     +--ro exit-code?   int8
+    +---x refresh-command
+    |  +---w input
+    |  |  +---w uid    uint64
+    |  +--ro output
+    |     +--ro buffer?      string
+    |     +--ro exit-code?   int8
+    +---x stop-command
+    |  +---w input
+    |  |  +---w uid    uint64
+    |  +--ro output
+    |     +--ro buffer?      string
+    |     +--ro exit-code?   int8
+    +---x get-completion
+    |  +--ro output
+    |     +--ro buffer?   string
+    +---x get-features
+    |  +--ro output
+    |     +--ro feature* [name]
+    |        +--ro name       string
+    |        +--ro enabled?   boolean
+    +---x show-summary
+       +--ro output
+          +--ro buffer?   string
+
+module: vrouter-fast-path
+
+  rpcs:
+    +---x show-fast-path-cpu-usage
+    |  +--ro output
+    |     +--ro status-rpc?    string
+    |     +--ro refresh-rpc?   string
+    |     +--ro stop-rpc?      string
+    |     +--ro buffer?        string
+    |     +--ro exit-code?     int8
+    +---x show-fast-path-table-usage
+       +--ro output
+          +--ro status-rpc?    string
+          +--ro refresh-rpc?   string
+          +--ro stop-rpc?      string
+          +--ro buffer?        string
+          +--ro exit-code?     int8
+
+module: vrouter-interface
+
+  rpcs:
+    +---x show-throughput
+    |  +---w input
+    |  |  +---w vrf?     string
+    |  |  +---w type?    identityref
+    |  |  +---w name*    string
+    |  |  +---w count?   uint16
+    |  |  +---w raw?     empty
+    |  +--ro output
+    |     +--ro status-rpc?    string
+    |     +--ro refresh-rpc?   string
+    |     +--ro stop-rpc?      string
+    |     +--ro buffer?        string
+    |     +--ro exit-code?     int8
+    +---x show-interface
+    |  +---w input
+    |  |  +---w vrf?     string
+    |  |  +---w l3vrf?   string
+    |  |  +---w type?    identityref
+    |  |  +---w level?   enumeration
+    |  |  +---w name?    string
+    |  +--ro output
+    |     +--ro status-rpc?    string
+    |     +--ro refresh-rpc?   string
+    |     +--ro stop-rpc?      string
+    |     +--ro buffer?        string
+    |     +--ro exit-code?     int8
+    +---x dhcp-client-renew-lease
+       +---w input
+       |  +---w vrf?      string
+       |  +---w ifname    vrouter-types:ifname
+       +--ro output
+          +--ro status-rpc?    string
+          +--ro refresh-rpc?   string
+          +--ro stop-rpc?      string
+          +--ro buffer?        string
+          +--ro exit-code?     int8
+
+module: vrouter-ntp
+
+  rpcs:
+    +---x show-ntp
+    |  +---w input
+    |  |  +---w vrf?       string
+    |  |  +---w details?   empty
+    |  +--ro output
+    |     +--ro enabled?   boolean
+    |     +--ro server* [address]
+    |        +--ro address             vr-inet:host
+    |        +--ro version?            uint8
+    |        +--ro association-type?   enumeration
+    |        +--ro iburst?             boolean
+    |        +--ro prefer?             boolean
+    |        +--ro stratum?            uint8
+    |        +--ro root-delay?         uint32
+    |        +--ro root-dispersion?    uint64
+    |        +--ro offset?             uint64
+    |        +--ro poll-interval?      uint32
+    |        +--ro synchronized?       boolean
+    |        +--ro state?              enumeration
+    |        +--ro auth-key-id?        uint16
+    +---x show-ntp-clients
+       +---w input
+       |  +---w vrf?     string
+       |  +---w l3vrf?   string
+       +--ro output
+          +--ro client* [host]
+             +--ro host                    vr-inet:host
+             +--ro ntp-packets?            uint32
+             +--ro dropped-ntp-packets?    uint32
+             +--ro last-ntp-packet-time?   uint32
+             +--ro cmd-packets?            uint32
+             +--ro dropped-cmd-packets?    uint32
+             +--ro last-cmd-packet-time?   uint32
+
+module: vrouter-system
+
+  rpcs:
+    +---x banner
+    |  +---w input
+    |  |  +---w pre-login
+    |  |  |  +---w message?   string
+    |  |  |  +---w reset?     empty
+    |  |  +---w post-login
+    |  |     +---w message?   string
+    |  |     +---w reset?     empty
+    |  +--ro output
+    |     +--ro buffer?   string
+    +---x reboot
+    |  +---w input
+    |  |  +---w delay?    uint32
+    |  |  +---w cancel?   empty
+    |  +--ro output
+    |     +--ro reboot-time?   string
+    +---x reboot-cli
+    |  +---w input
+    |  |  +---w delay?    uint32
+    |  |  +---w cancel?   empty
+    |  |  +---w force?    empty
+    |  +--ro output
+    |     +--ro buffer?   string
+    +---x poweroff
+    |  +---w input
+    |  |  +---w delay?    uint32
+    |  |  +---w cancel?   empty
+    |  +--ro output
+    |     +--ro poweroff-time?   string
+    +---x poweroff-cli
+    |  +---w input
+    |  |  +---w delay?    uint32
+    |  |  +---w cancel?   empty
+    |  |  +---w force?    empty
+    |  +--ro output
+    |     +--ro buffer?   string
+    +---x ping
+    |  +---w input
+    |  |  +---w vrf?           string
+    |  |  +---w l3vrf?         string
+    |  |  +---w count?         uint16
+    |  |  +---w packetsize?    uint16
+    |  |  +---w nodns?         empty
+    |  |  +---w ipv6?          empty
+    |  |  +---w source?        string
+    |  |  +---w rate?          uint16
+    |  |  +---w destination    string
+    |  +--ro output
+    |     +--ro status-rpc?    string
+    |     +--ro refresh-rpc?   string
+    |     +--ro stop-rpc?      string
+    |     +--ro buffer?        string
+    |     +--ro exit-code?     int8
+    +---x traceroute
+    |  +---w input
+    |  |  +---w vrf?                string
+    |  |  +---w l3vrf?              string
+    |  |  +---w nodns?              empty
+    |  |  +---w ipv6?               empty
+    |  |  +---w source?             vr-inet:ip-address
+    |  |  +---w source-interface?   string
+    |  |  +---w host                string
+    |  +--ro output
+    |     +--ro status-rpc?    string
+    |     +--ro refresh-rpc?   string
+    |     +--ro stop-rpc?      string
+    |     +--ro buffer?        string
+    |     +--ro exit-code?     int8
+    +---x show-conntracks
+    |  +---w input
+    |  |  +---w vrf?        string
+    |  |  +---w family?     union
+    |  |  +---w protocol?   union
+    |  +--ro output
+    |     +--ro status-rpc?    string
+    |     +--ro refresh-rpc?   string
+    |     +--ro stop-rpc?      string
+    |     +--ro buffer?        string
+    |     +--ro exit-code?     int8
+    +---x show-product
+    |  +---w input
+    |  |  +---w name?      empty
+    |  |  +---w version?   empty
+    |  +--ro output
+    |     +--ro status-rpc?    string
+    |     +--ro refresh-rpc?   string
+    |     +--ro stop-rpc?      string
+    |     +--ro buffer?        string
+    |     +--ro exit-code?     int8
+    +---x traffic-capture
+    |  +---w input
+    |  |  +---w vrf?         string
+    |  |  +---w count?       uint16
+    |  |  +---w filter?      string
+    |  |  +---w interface    string
+    |  |  +---w details?     empty
+    |  +--ro output
+    |     +--ro status-rpc?    string
+    |     +--ro refresh-rpc?   string
+    |     +--ro stop-rpc?      string
+    |     +--ro buffer?        string
+    |     +--ro exit-code?     int8
+    +---x traffic-capture-new
+    |  +---w input
+    |  |  +---w name?        string
+    |  |  +---w vrf?         string
+    |  |  +---w count?       uint16
+    |  |  +---w filter?      string
+    |  |  +---w interface    string
+    |  +--ro output
+    |     +--ro status-rpc?    string
+    |     +--ro refresh-rpc?   string
+    |     +--ro stop-rpc?      string
+    |     +--ro buffer?        string
+    |     +--ro exit-code?     int8
+    +---x traffic-capture-list
+    |  +--ro output
+    |     +--ro status-rpc?    string
+    |     +--ro refresh-rpc?   string
+    |     +--ro stop-rpc?      string
+    |     +--ro buffer?        string
+    |     +--ro exit-code?     int8
+    +---x traffic-capture-flush
+    +---x traffic-capture-read
+    |  +---w input
+    |  |  +---w name    string
+    |  +--ro output
+    |     +--ro status-rpc?    string
+    |     +--ro refresh-rpc?   string
+    |     +--ro stop-rpc?      string
+    |     +--ro buffer?        string
+    |     +--ro exit-code?     int8
+    +---x traffic-capture-delete
+    |  +---w input
+    |     +---w name    string
+    +---x traffic-capture-export
+    |  +---w input
+    |     +---w vrf?        string
+    |     +---w url         union
+    |     +---w user?       string
+    |     +---w password?   string
+    |     +---w name        string
+    +---x troubleshooting-report
+    |  +---w input
+    |  |  +---w list?     empty
+    |  |  +---w delete!
+    |  |  |  +---w name    string
+    |  |  +---w flush?    empty
+    |  |  +---w new?      empty
+    |  |  +---w export!
+    |  |     +---w vrf?        string
+    |  |     +---w url         union
+    |  |     +---w user?       string
+    |  |     +---w password?   string
+    |  |     +---w name        string
+    |  +--ro output
+    |     +--ro buffer?        string
+    |     +--ro exit-code?     int8
+    |     +--ro status-rpc?    string
+    |     +--ro refresh-rpc?   string
+    |     +--ro stop-rpc?      string
+    +---x show-date
+    |  +--ro output
+    |     +--ro buffer?   string
+    +---x show-neighbors
+       +---w input
+       |  +---w family?      union
+       |  +---w vrf?         string
+       |  +---w interface?   string
+       +--ro output
+          +--ro neighbor* [neighbor]
+             +--ro neighbor              string
+             +--ro interface?            string
+             +--ro state?                string
+             +--ro link-layer-address?   string
+
+module: config-backup-restore
+
+  rpcs:
+    +---x backup
+    |  +---w input
+    |     +---w filename?   string
+    +---x restore
+       +---w input
+          +---w filename?   string
