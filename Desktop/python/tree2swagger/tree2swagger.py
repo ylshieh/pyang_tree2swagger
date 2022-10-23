@@ -148,7 +148,7 @@ module_name=""
  
 path = "/"
  
-sec_list = []
+sec_list = {}
 pos_path = {}
 name=""
 pos = 0
@@ -175,14 +175,16 @@ for data in path_list:
         #print(f"path_array: {path_array}")   
         path_array[pos] = name
         path= path + name + '/'
+        sec_list['/'+path+name] = {'name': {'type':'container' }}
         print(f"/{path}")
     elif data['keyword'] == 'leaf':
         if len(data['name'].split(':')) > 1:
             name = data['name']
         else:
             name = module_name + ':' + data['name']
-        
+        sec_list['/'+path+name] = {data['name']: {'type':data['type'] }}
         print(f"/{path}{name} , type: {data['type']}")
+        
     elif data['keyword'] == 'key':
         if len(data['name'].split(':')) > 1:
             name = data['name']
@@ -194,3 +196,6 @@ for data in path_list:
         print(f"rpcs: {module_name}")
     else:
         print(f"2nd: unexpected keyword:{data['keyword']} ")     
+
+for path in sec_list:
+    print(f"{path}  : {sec_list[path]}")       
